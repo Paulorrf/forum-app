@@ -1,29 +1,28 @@
-import { collection, getDocs } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { db } from "../../firebase";
-
-type PostsT = Array<Object>;
+import { Container, List, ListItem } from "./Home.style";
 
 const Home = () => {
-  const [posts, setPosts] = useState<PostsT>();
-  const dbRef = collection(db, "general-discussion");
+  return (
+    <Container>
+      <List>
+        <ListItem>
+          <Link to="/posts/general-discussions">General Discussion</Link>
+        </ListItem>
+        <ListItem>
+          <Link to="/posts/off-topic">Off Topic</Link>
+        </ListItem>
 
-  useEffect(() => {
-    async function getPosts() {
-      const data = await getDocs(dbRef);
-      setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    }
+        <ListItem>
+          <Link to="/posts/lore">Lore</Link>
+        </ListItem>
 
-    getPosts();
-
-    //eslint-disable-next-line
-  }, []);
-
-  console.log(posts);
-
-  return <div></div>;
+        <ListItem>
+          <Link to="/posts/questions">Q&A Questions</Link>
+        </ListItem>
+      </List>
+    </Container>
+  );
 };
 
 export default Home;

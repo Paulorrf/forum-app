@@ -6,6 +6,8 @@ import { useAppSelector } from "./app/hooks";
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/Home/Home";
 import LoginRegister from "./pages/LoginRegister/LoginRegister";
+import Posts from "./pages/Posts/Posts";
+import Post from "./components/Post/Post";
 
 function App() {
   const { dark } = useAppSelector((state) => state.lightDark);
@@ -16,6 +18,9 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="posts" element={<Posts />}>
+            <Route path=":id" element={<Post />} />
+          </Route>
           <Route path="/login" element={<LoginRegister />} />
           <Route path="/register" element={<LoginRegister />} />
         </Routes>

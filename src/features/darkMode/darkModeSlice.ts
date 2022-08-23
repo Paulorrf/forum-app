@@ -3,8 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const local: string | null = localStorage.getItem("darkMode");
 let localParse: boolean = false;
 
-console.log(local);
-
 if (local === "true" || local === "false") {
   localParse = JSON.parse(local);
 }
