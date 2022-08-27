@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Counter } from "./features/counter/Counter";
 import { useAppSelector } from "./app/hooks";
 
 import Navbar from "./components/Navbar/Navbar";
@@ -8,6 +6,10 @@ import Home from "./pages/Home/Home";
 import LoginRegister from "./pages/LoginRegister/LoginRegister";
 import Posts from "./pages/Posts/Posts";
 import Post from "./components/Post/Post";
+import CreatePost from "./pages/CreatePost/CreatePost";
+import FullPost from "./pages/FullPost/FullPost";
+
+import RequireAuth from "./utils/RequireAuth";
 
 function App() {
   const { dark } = useAppSelector((state) => state.lightDark);
@@ -18,9 +20,18 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route
+            path="create"
+            element={
+              <RequireAuth>
+                <CreatePost />
+              </RequireAuth>
+            }
+          />
           <Route path="posts" element={<Posts />}>
             <Route path=":id" element={<Post />} />
           </Route>
+          <Route path="posts/:id/:id" element={<FullPost />} />
           <Route path="/login" element={<LoginRegister />} />
           <Route path="/register" element={<LoginRegister />} />
         </Routes>

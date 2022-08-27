@@ -1,16 +1,25 @@
-import { getDocs, collection } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { getDocs, collection, DocumentData } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { db } from "../../firebase";
 
-type PostsT = Array<Object>;
+import {
+  Container,
+  Line,
+  PostContainer,
+  Title,
+  MainContent,
+  Username,
+} from "./Post.style";
+
+type PostsT = Array<DocumentData> | [];
 
 const Post = () => {
-  const [posts, setPosts] = useState<PostsT>();
+  const [posts, setPosts] = useState<PostsT>([]);
   const params = useParams();
   const navigate = useNavigate();
 
-  const validRoutes = ["general-discussions", "off-topic", "lore", "questions"];
+  const validRoutes = ["general-discussion", "off-topic", "lore", "questions"];
 
   useEffect(() => {
     //if route is invalid
@@ -19,18 +28,32 @@ const Post = () => {
     }
 
     const dbRef = collection(db, params.id!);
+
     async function getPosts() {
       const data = await getDocs(dbRef);
       setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
 
     getPosts();
-
     //eslint-disable-next-line
   }, []);
-  console.log(posts);
 
-  return <div>Post</div>;
+  return (
+    <Container>
+      {posts?.map((post: DocumentData) => {
+        return (
+          <PostContainer key={post.id}>
+            <Link to={`/posts/${params.id}/${post.id}`}>
+              <Title>{post?.title.toUpperCase()}</Title>
+            </Link>
+            <MainContent>{post?.mainContent.toUpperCase()}</MainContent>
+            <Username>{post?.username.toUpperCase()}</Username>
+            <Line></Line>
+          </PostContainer>
+        );
+      })}
+    </Container>
+  );
 };
 
 export default Post;

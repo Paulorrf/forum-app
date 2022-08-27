@@ -7,7 +7,7 @@ const Home = () => {
     <Container>
       <List>
         <ListItem>
-          <Link to="/posts/general-discussions">General Discussion</Link>
+          <Link to="/posts/general-discussion">General Discussion</Link>
         </ListItem>
         <ListItem>
           <Link to="/posts/off-topic">Off Topic</Link>

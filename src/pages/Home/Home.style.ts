@@ -8,7 +8,6 @@ export const Container = styled.div`
 
   ${tw`
         absolute
-
     `}
 `;
 

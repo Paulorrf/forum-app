@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { logout } from "../../features/auth/authSlice";
 import { changeMode } from "../../features/darkMode/darkModeSlice";
+import { auth } from "../../firebase";
 
 const Navbar = () => {
   const [mode, setMode] = useState<boolean | undefined>();
   const dispatch = useAppDispatch();
-  const auth = useAppSelector((state) => state.auth);
+  const { email, username } = useAppSelector((state) => state.auth);
   const { dark } = useAppSelector((state) => state.lightDark);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setMode(dark);
@@ -18,7 +21,9 @@ const Navbar = () => {
 
   function handleLogout() {
     localStorage.removeItem("auth");
+    auth.signOut();
     dispatch(logout());
+    navigate("/");
   }
 
   function changeDarkLight() {
@@ -35,22 +40,27 @@ const Navbar = () => {
         </li>
 
         {/*if user is NOT logged */}
-        {auth.email === null ? (
+        {email === null ? (
           <>
             <li>
               <Link to="/login">login</Link>
             </li>
             <li>
               <Link to="/register">register</Link>
-            </li>{" "}
+            </li>
           </>
         ) : null}
 
         {/*if user IS logged */}
-        {auth.email === null ? null : (
-          <li>
-            <button onClick={handleLogout}>Logout</button>
-          </li>
+        {email === null ? null : (
+          <>
+            <li>
+              <Link to="create">Create Post</Link>
+            </li>
+            <li>
+              <button onClick={handleLogout}>Logout</button>
+            </li>
+          </>
         )}
 
         <li>
@@ -58,7 +68,9 @@ const Navbar = () => {
         </li>
       </ul>
 
-      <p className="absolute right-16 top-[2rem]">{auth.username}</p>
+      <p className="absolute right-16 top-[2rem]">
+        {email && `Logged as: ${username}`}
+      </p>
     </div>
   );
 };
