@@ -1,7 +1,6 @@
 import { collection, setDoc, doc } from "firebase/firestore";
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../app/hooks";
 import { db } from "../../firebase";
 
 import { Container, Input, TxtArea, BtnSubmit } from "./CreatePost.style";

@@ -1,31 +1,45 @@
 import {
   collection,
+  deleteDoc,
   doc,
   DocumentData,
   getDoc,
   getDocs,
 } from "firebase/firestore";
-import React, { useEffect, useState, FC } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { db } from "../../firebase";
+import { useEffect, useState, FC } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { db, auth } from "../../firebase";
 
 import {
-  Line,
   PostContainer,
+  ContentContainer,
   Title,
   MainContent,
+  UsernameContainer,
   Username,
+  CommentsContainer,
+  UpDelContainer,
+  UpdateCommentContainer,
 } from "./FullPost.style";
 
 import CreateComment from "../../components/CreateComment/CreateComment";
+import UpdateComment from "../../components/UpdateComment/UpdateComment";
 
 type CommentsProp = Array<DocumentData>;
 
+interface UpCommentI {
+  show: boolean;
+  id: string;
+}
+
 const FullPost: FC = () => {
-  const params = useParams();
   const [comments, setComments] = useState<CommentsProp | undefined>();
   const [postInfo, setPostInfo] = useState<DocumentData | undefined>();
   const [pathToDb, setPathToDb] = useState<any>();
+  const [updateComment, setUpdateComment] = useState<UpCommentI>({
+    show: false,
+    id: "",
+  });
 
   const validRoutes = ["general-discussion", "off-topic", "lore", "questions"];
 
@@ -40,12 +54,12 @@ const FullPost: FC = () => {
     if (!validRoutes.includes(urlParams[0])) {
       console.log(urlParams);
     }
+    //eslint-disable-next-line
   }, []);
-
-  console.log(postInfo);
 
   useEffect(() => {
     const docRef = doc(db, urlParams[0], urlParams[1]);
+
     async function getOneDoc() {
       const docSnap = await getDoc(docRef);
 
@@ -56,10 +70,11 @@ const FullPost: FC = () => {
       }
     }
     getOneDoc();
+    //eslint-disable-next-line
   }, []);
 
   useEffect(() => {
-    //comentarios do post
+    //post comments
     const dbRef = collection(db, urlParams[0], urlParams[1], "comentarios");
 
     //path needed to create a commentary
@@ -76,25 +91,81 @@ const FullPost: FC = () => {
     }
 
     getPosts();
+    //eslint-disable-next-line
   }, []);
+
+  async function deleteComment(commentID: any) {
+    await deleteDoc(
+      doc(db, urlParams[0], urlParams[1], "comentarios", commentID)
+    )
+      .then(() => {
+        console.log("deletou");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <div className="w-4/5 mx-auto">
       <h2 className="mb-8">Full Posts</h2>
       <PostContainer>
-        <p>{params.id}</p>
-        <Title>{postInfo?.title}</Title>
-        <MainContent>{postInfo?.mainContent}</MainContent>
-        <Username>{postInfo?.username}</Username>
+        <ContentContainer>
+          <Title>{postInfo?.title}</Title>
+          <MainContent>{postInfo?.mainContent}</MainContent>
+        </ContentContainer>
+        <UsernameContainer>
+          <Username>Username: {postInfo?.username.toUpperCase()}</Username>
+        </UsernameContainer>
       </PostContainer>
-      <Line></Line>
+
       {comments?.map((comment: DocumentData) => {
         return (
-          <div key={comment.id}>
-            <p>{comment?.username}</p>
-            <p>{comment?.comentario}</p>
-            <div>--------</div>
-          </div>
+          <CommentsContainer key={comment.id}>
+            <UsernameContainer>
+              <Username isComment={true}>
+                Username: {comment?.username.toUpperCase()}
+              </Username>
+            </UsernameContainer>
+            <ContentContainer>
+              <p>{comment?.comentario}</p>
+            </ContentContainer>
+
+            {auth?.currentUser?.uid === comment?.userID &&
+              auth.currentUser !== null && (
+                <UpDelContainer>
+                  <button
+                    className="mr-8"
+                    onClick={() => deleteComment(comment.id)}
+                  >
+                    Delete
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setUpdateComment({
+                        show: true,
+                        id: comment.id,
+                      })
+                    }
+                  >
+                    Update
+                  </button>
+
+                  {updateComment.show &&
+                    updateComment.id === comment.id &&
+                    auth?.currentUser?.uid === comment?.userID && (
+                      <UpdateCommentContainer>
+                        <UpdateComment
+                          pathToDb={pathToDb}
+                          commentID={comment.id}
+                          username={comment?.username}
+                        />
+                      </UpdateCommentContainer>
+                    )}
+                </UpDelContainer>
+              )}
+          </CommentsContainer>
         );
       })}
 

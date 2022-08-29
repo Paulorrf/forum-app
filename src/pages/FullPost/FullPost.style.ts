@@ -1,34 +1,87 @@
 import styled from "styled-components";
 import tw from "twin.macro";
 
-export const Line = styled.hr`
-  ${tw`       
-        
+interface UsernameProps {
+  isComment?: boolean;
+}
+
+export const PostContainer = styled.div`
+  background-color: rgba(255, 255, 255, 0.1);
+  ${tw`
+      flex
+      flex-col
+      rounded-xl
+      mb-12
     `}
 `;
 
-export const PostContainer = styled.div`
+export const ContentContainer = styled.div`
   ${tw`
-        flex
-        flex-col
-    `}
+      p-4
+      rounded-tr-lg
+      rounded-tl-lg
+  `}
 `;
 
 export const Title = styled.h2`
   ${tw`
-        text-3xl
+      text-4xl
+      mb-4
     `}
 `;
 export const MainContent = styled.p`
   ${tw`
-        text-lg
+      text-lg
+      mb-2
     `}
 `;
-export const Username = styled.p`
+
+export const UsernameContainer = styled.div`
   ${tw`
-        text-sm
-        self-end
-        mr-4
-        mb-4
+      w-full
+      min-h-full
+  `}
+`;
+
+export const Username = styled.p<UsernameProps>`
+  background-color: rgba(1, 1, 1, 0.3);
+
+  ${({ isComment }) =>
+    isComment
+      ? tw`rounded-tr-lg rounded-tl-lg`
+      : tw`rounded-br-lg
+        rounded-bl-lg`}
+
+  ${tw`
+      text-sm
+      w-full
+      p-4
+       
+        
     `}
+`;
+
+export const CommentsContainer = styled.div`
+  background-color: rgba(255, 255, 255, 0.1);
+
+  ${tw`
+      rounded-xl
+      mb-4
+  `}
+`;
+
+export const UpDelContainer = styled.div`
+  background-color: rgba(1, 1, 1, 0.3);
+  ${tw`
+      px-4
+      py-2
+      rounded-br-lg
+      rounded-bl-lg
+  `}
+`;
+
+export const UpdateCommentContainer = styled.div`
+  ${tw`
+      mt-8
+  `}
 `;

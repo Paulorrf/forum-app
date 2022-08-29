@@ -18,11 +18,10 @@ type CredentialsType = string | undefined;
 const LoginRegister = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [urlEndpoint, setUrlEndpoint] = useState("");
 
   //used only on register
   const [username, setUsername] = useState("");
-
-  const [urlEndpoint, setUrlEndpoint] = useState("");
 
   const dispatch = useAppDispatch();
 
@@ -81,9 +80,12 @@ const LoginRegister = () => {
     //token
     const credential = await auth.currentUser?.getIdToken();
 
+    const userID = auth?.currentUser?.uid;
+
     const newUser = {
       username,
       email,
+      userID,
     };
 
     const localUser = {

@@ -15,11 +15,15 @@ type DbRef = CollectionReference<DocumentData> | undefined;
 const CreateComment = ({ pathToDb }: { pathToDb: PathT }) => {
   const [comment, setComment] = useState("");
   const [showAddComment, setShowAddComment] = useState(false);
+  const [emptyComment, setEmptyComment] = useState(false);
 
   const user = useAppSelector((state) => state.auth);
 
   async function createComment() {
-    if (comment === "") return;
+    if (comment === "") {
+      setEmptyComment(true);
+      return;
+    }
 
     const dbRef: DbRef = collection(
       db,
@@ -28,9 +32,12 @@ const CreateComment = ({ pathToDb }: { pathToDb: PathT }) => {
       "comentarios"
     );
 
+    const userID = auth?.currentUser?.uid;
+
     await addDoc(dbRef, {
       comentario: comment,
       username: user.username,
+      userID,
     });
     setShowAddComment(false);
   }
@@ -50,7 +57,9 @@ const CreateComment = ({ pathToDb }: { pathToDb: PathT }) => {
       {showAddComment && (
         <div className="flex flex-col mb-8">
           <textarea
-            className="resize-none border text-textLight"
+            className={`resize-none border text-textLight ${
+              emptyComment && "border-[red]"
+            }`}
             placeholder="Comentario"
             rows={5}
             cols={80}
