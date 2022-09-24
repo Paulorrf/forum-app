@@ -12,6 +12,8 @@ export const PostContainer = styled.div`
       flex-col
       rounded-xl
       mb-12
+      border
+      border-bgDark
     `}
 `;
 
@@ -67,6 +69,8 @@ export const CommentsContainer = styled.div`
   ${tw`
       rounded-xl
       mb-4
+      border
+      border-bgDark
   `}
 `;
 
